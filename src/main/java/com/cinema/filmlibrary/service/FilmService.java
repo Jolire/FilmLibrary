@@ -9,7 +9,6 @@ import com.cinema.filmlibrary.exception.ForbiddenAccessException;
 import com.cinema.filmlibrary.repository.DirectorRepository;
 import com.cinema.filmlibrary.repository.FilmRepository;
 import com.cinema.filmlibrary.utils.CacheUtil;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
