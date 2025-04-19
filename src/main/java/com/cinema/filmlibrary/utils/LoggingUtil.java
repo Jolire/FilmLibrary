@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingUtil {
 
-    Logger logger = LoggerFactory.getLogger(LoggingUtil.class);
+    private final Logger logger = LoggerFactory.getLogger(LoggingUtil.class);
 
     /** Function to create logs before method execution. */
     @Before("execution(* com.cinema.filmlibrary..*(..))")

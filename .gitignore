@@ -1,8 +1,14 @@
 # Compiled class file
 *.class
 
-.idea
-.DS_STORE
+.idea/
+.DS_Store
+env.yml
+FilmLibrary.iml
+app.log
+mvnw
+mvnw.cmd
+.mvn/
 # Log file
 *.log
 
