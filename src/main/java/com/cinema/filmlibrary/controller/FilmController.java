@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -153,6 +154,16 @@ public class FilmController {
     @ResponseStatus(code = org.springframework.http.HttpStatus.CREATED)
     public Film createFilm(@RequestBody Film film) {
         return filmService.save(film);
+    }
+
+    /** Function to save some films for one request.
+     *
+     * @param films list of films
+     * @return list of the books in JSON format
+     */
+    @PostMapping("/bulk")
+    public List<Film> createFilms(@Valid @RequestBody List<Film> films) {
+        return films.stream().map(filmService::save).toList();
     }
 
     /** Updates an existing film.
