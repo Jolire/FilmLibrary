@@ -3,6 +3,15 @@ package com.cinema.filmlibrary.service;
 import com.cinema.filmlibrary.exception.FileProcessingException;
 import com.cinema.filmlibrary.exception.InvalidValueFormatException;
 import com.cinema.filmlibrary.exception.ResourceNotFoundException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,35 +24,29 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Set;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-/** Class to hold logic for operations with logs. */
 @Service
 public class LogService {
 
-    private static final String LOG_FILE_PATH = "app.log";
+    private final String logFilePath;
 
-    /** Function to get logs for certain date.
-     *
-     * @param date date of the logs
-     * @return file with logs for certain date
-     */
+    public LogService() {
+        this("app.log"); // значение по умолчанию
+    }
+
+    public LogService(String logFilePath) {
+        this.logFilePath = logFilePath;
+    }
+
     public ResponseEntity<Resource> downloadLogs(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate logDate = LocalDate.parse(date, formatter);
 
-            Path path = Paths.get(LOG_FILE_PATH);
+            Path path = Paths.get(logFilePath);
             if (!Files.exists(path)) {
                 throw new ResourceNotFoundException(HttpStatus.INTERNAL_SERVER_ERROR,
-                        "File doesn't exist: " + LOG_FILE_PATH);
+                        "File doesn't exist: " + logFilePath);
             }
 
             String formattedDate = logDate.format(formatter);
