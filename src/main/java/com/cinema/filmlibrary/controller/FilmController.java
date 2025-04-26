@@ -5,6 +5,7 @@ import com.cinema.filmlibrary.entity.Film;
 import com.cinema.filmlibrary.exception.InvalidRequestException;
 import com.cinema.filmlibrary.mapper.FilmMapper;
 import com.cinema.filmlibrary.service.FilmService;
+import com.cinema.filmlibrary.service.RequestCounterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,15 +37,17 @@ public class FilmController {
 
     private final FilmService filmService;
     private final FilmMapper filmMapper;
+    private final RequestCounterService requestCounterService;
 
     /** Constructor for FilmController.
      *
      * @param filmService service for film operations
      * @param filmMapper mapper for converting between Film and FilmDto
      */
-    public FilmController(FilmService filmService, FilmMapper filmMapper) {
+    public FilmController(FilmService filmService, FilmMapper filmMapper, RequestCounterService requestCounterService) {
         this.filmService = filmService;
         this.filmMapper = filmMapper;
+        this.requestCounterService = requestCounterService;
     }
 
     /** Gets films by title containing substring.
@@ -76,10 +79,21 @@ public class FilmController {
             })
     @GetMapping("/all")
     public List<FilmDto> getAllFilms() {
+        requestCounterService.incrementAllFilmsRequestCount();
         List<Film> films = filmService.findAllFilms();
         return films.stream()
                 .map(filmMapper::toDto)
                 .toList();
+    }
+
+    @GetMapping("/all/request-count")
+    public int getAllFilmsRequestCount() {
+        return requestCounterService.getAllFilmsRequestCount();
+    }
+
+    @PostMapping("/all/reset-request-count")
+    public void resetAllFilmsRequestCount() {
+        requestCounterService.resetAllFilmsRequestCount();
     }
 
     /** Gets film by ID.
