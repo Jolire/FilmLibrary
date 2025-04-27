@@ -28,7 +28,7 @@ public class AsyncLogService {
     @Async("taskExecutor")
     public void createLogs(Long taskId, String date, Cache logsCache) {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(20000);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate logDate = LocalDate.parse(date, formatter);

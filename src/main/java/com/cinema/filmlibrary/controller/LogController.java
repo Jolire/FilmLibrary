@@ -38,7 +38,7 @@ public class LogController {
     @PostMapping("/generate")
     public ResponseEntity<Long> createLogs(
             @Parameter(description = "Date for logs", example = "19-03-2025")
-            @RequestParam String date) {
+            @RequestParam("date") String date) {
         Long taskId = logService.startLogCreation(date);
         return ResponseEntity.accepted().body(taskId);
     }
@@ -52,7 +52,7 @@ public class LogController {
     @GetMapping("/status/{taskId}")
     public ResponseEntity<Map<String, String>> checkStatus(
             @Parameter(description = "Task ID")
-            @PathVariable Long taskId) {
+            @PathVariable("taskId") Long taskId) {
         LogObj task = logService.getStatus(taskId);
         Map<String, String> response = new HashMap<>();
         response.put("status", task.getStatus());
@@ -71,7 +71,7 @@ public class LogController {
     @GetMapping("/download/{taskId}")
     public ResponseEntity<Resource> downloadCreatedLogs(
             @Parameter(description = "Task ID")
-            @PathVariable Long taskId) throws IOException {
+            @PathVariable("taskId") Long taskId) throws IOException {
         return logService.downloadCreatedLogs(taskId);
     }
 }
