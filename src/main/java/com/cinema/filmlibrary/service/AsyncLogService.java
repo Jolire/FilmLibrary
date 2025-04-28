@@ -1,7 +1,7 @@
 package com.cinema.filmlibrary.service;
 
-import com.cinema.filmlibrary.exception.ResourceNotFoundException;
 import com.cinema.filmlibrary.entity.LogObj;
+import com.cinema.filmlibrary.exception.ResourceNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +41,8 @@ public class AsyncLogService {
                     .toList();
 
             if (currentLogs.isEmpty()) {
-                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "No logs for date: " + date);
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,
+                        "No logs for date: " + date);
             }
 
             Path logFile = Files.createTempFile("logs-" + formattedDate, ".log");

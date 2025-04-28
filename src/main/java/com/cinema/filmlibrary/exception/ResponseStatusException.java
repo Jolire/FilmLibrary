@@ -10,6 +10,7 @@ public class ResponseStatusException extends BasicException {
 
     /**
      * Constructor with HTTP status and message.
+     *
      * @param status HTTP status code
      * @param message Error message
      */
@@ -19,6 +20,7 @@ public class ResponseStatusException extends BasicException {
 
     /**
      * Constructor with HTTP status only (uses default reason phrase).
+     *
      * @param status HTTP status code
      */
     public ResponseStatusException(HttpStatus status) {
@@ -27,6 +29,7 @@ public class ResponseStatusException extends BasicException {
 
     /**
      * Convenience constructor for common status codes.
+     *
      * @param message Error message
      */
     public ResponseStatusException(String message) {

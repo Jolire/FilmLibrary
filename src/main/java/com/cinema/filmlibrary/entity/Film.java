@@ -30,8 +30,8 @@ import lombok.ToString;
 @NamedEntityGraph(
         name = "Film",
         attributeNodes = {
-                @NamedAttributeNode("directors"),
-                @NamedAttributeNode("reviews")
+            @NamedAttributeNode("directors"),
+            @NamedAttributeNode("reviews")
         }
 )
 @Schema(description = "Represents a film.")
@@ -52,7 +52,7 @@ public class Film {
     private Integer releaseYear;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+        CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_director",
             joinColumns = @JoinColumn(name = "film_id"),

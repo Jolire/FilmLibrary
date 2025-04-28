@@ -1,11 +1,10 @@
 package com.cinema.filmlibrary.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /** Interface for exception handlers. */
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")

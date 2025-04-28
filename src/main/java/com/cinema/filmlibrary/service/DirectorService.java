@@ -9,13 +9,13 @@ import com.cinema.filmlibrary.repository.DirectorRepository;
 import com.cinema.filmlibrary.repository.FilmRepository;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** Class to perform asynchronous actions with logs. */
 @Service
 public class DirectorService {
     private static final String ERROR_MESSAGE = "Director not found";
@@ -27,6 +27,7 @@ public class DirectorService {
     private final FilmService filmService;
     private final FilmRepository filmRepository;
 
+    /** The main method. */
     public DirectorService(DirectorRepository directorRepository, FilmService filmService,
                            FilmRepository filmRepository) {
         this.directorRepository = directorRepository;
@@ -34,18 +35,20 @@ public class DirectorService {
         this.filmRepository = filmRepository;
     }
 
+    /** The main method. */
     @Cacheable(value = DIRECTORS_CACHE, key = "#id")
     public Director findById(Long id, Long filmId) {
         if (filmId == null) {
             throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
         }
         if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,"Film not found");
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
         }
 
         Film film = filmService.findById(filmId);
         Director director = directorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HttpStatus.NOT_FOUND, ERROR_MESSAGE));
+                .orElseThrow(() -> new ResourceNotFoundException(HttpStatus.NOT_FOUND,
+                        ERROR_MESSAGE));
 
         if (!film.getDirectors().contains(director)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, ERROR_MESSAGE);
@@ -54,6 +57,7 @@ public class DirectorService {
         return director;
     }
 
+    /** The main method. */
     @Cacheable(DIRECTORS_CACHE)
     public List<Director> findAllDirectors() {
         try {
@@ -63,6 +67,7 @@ public class DirectorService {
         }
     }
 
+    /** The main method. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public Director save(Director director, Long filmId) {
@@ -86,14 +91,17 @@ public class DirectorService {
         return directorRepository.save(director);
     }
 
+    /** The main method. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public Director update(Long id, Director director) {
         if (id == null) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "Id parameter cannot be empty");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "Id parameter cannot be empty");
         }
         if (director == null) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "Director cannot be null");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "Director cannot be null");
         }
         if (!directorRepository.existsById(id)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, ERROR_MESSAGE);
@@ -103,6 +111,7 @@ public class DirectorService {
         return directorRepository.save(director);
     }
 
+    /** The main method. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public void delete(Long id, Long filmId) {
@@ -110,7 +119,7 @@ public class DirectorService {
             throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
         }
         if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,"Film not found");
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
         }
 
         Film film = filmService.findById(filmId);
@@ -133,13 +142,16 @@ public class DirectorService {
 
     private void validateDirector(Director director) {
         if (director.getName() == null || director.getName().trim().isEmpty()) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "Name parameter cannot be empty");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "Name parameter cannot be empty");
         }
         if (director.getNationality() == null || director.getNationality().trim().isEmpty()) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "Nationality parameter cannot be empty");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "Nationality parameter cannot be empty");
         }
         if (director.getBirthYear() > 2025 || director.getBirthYear() < 1925) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "Birth year must be between 1925 and 2025");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "Birth year must be between 1925 and 2025");
         }
     }
 }

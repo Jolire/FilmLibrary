@@ -67,7 +67,8 @@ public class LogController {
      * @param taskId id of the task
      * @return file with specified logs
      */
-    @Operation(summary = "Download created logs", description = "Downloads generated log file by ID")
+    @Operation(summary = "Download created logs", description =
+            "Downloads generated log file by ID")
     @GetMapping("/download/{taskId}")
     public ResponseEntity<Resource> downloadCreatedLogs(
             @Parameter(description = "Task ID")

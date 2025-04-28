@@ -1,6 +1,9 @@
 package com.cinema.filmlibrary.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,9 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /** Class to handle argument exceptions. */
 @ControllerAdvice

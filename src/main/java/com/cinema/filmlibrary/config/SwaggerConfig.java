@@ -16,6 +16,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("FilmLibrary API")
                         .version("1.0")
-                        .description("API for interacting with books and their elements (authors and reviews)"));
+                        .description("API for interacting with books "
+                                + "and their elements authors and reviews)"));
     }
 }

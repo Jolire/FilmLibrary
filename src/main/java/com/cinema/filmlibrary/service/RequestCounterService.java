@@ -2,20 +2,23 @@ package com.cinema.filmlibrary.service;
 
 import org.springframework.stereotype.Service;
 
+/** Main method. */
 @Service
 public class RequestCounterService {
 
-    private int allFilmsRequestCount = 0;
+    private int requestCount = 0;
 
+    /** Main method. */
     public synchronized void incrementAllFilmsRequestCount() {
-        allFilmsRequestCount++;
+        requestCount++;
     }
 
-    public synchronized int getAllFilmsRequestCount() {
-        return allFilmsRequestCount;
+    public synchronized int getRequestCount() {
+        return requestCount;
     }
 
+    /** Main method. */
     public synchronized void resetAllFilmsRequestCount() {
-        allFilmsRequestCount = 0;
+        requestCount = 0;
     }
 }

@@ -9,9 +9,7 @@ import com.cinema.filmlibrary.repository.FilmRepository;
 import com.cinema.filmlibrary.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,7 @@ public class ReviewService {
     private static final String ERROR_MESSAGE = "Review not found";
     private static final String REVIEWS_CACHE = "reviews";
     private static final String FILMS_CACHE = "films";
-    private final String FORBIDDEN_MESSAGE = "Access to this operation is forbidden";
+    private final String errorMessageForbidden = "Access to this operation is forbidden";
     private final ReviewRepository reviewRepository;
     private final FilmService filmService;
     private final FilmRepository filmRepository;
@@ -50,7 +48,8 @@ public class ReviewService {
     @Transactional
     @CacheEvict(value = {REVIEWS_CACHE, FILMS_CACHE}, key = "#filmId")
     public Review createReview(Long filmId, Review review) {
-        Film film = filmRepository.findById(filmId).orElseThrow(() -> new EntityNotFoundException("Film not found"));
+        Film film = filmRepository.findById(filmId)
+                .orElseThrow(() -> new EntityNotFoundException("Film not found"));
         review.setFilm(film);
         return reviewRepository.save(review);
     }
@@ -72,7 +71,7 @@ public class ReviewService {
             throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
         }
         if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,"Film not found");
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
         }
 
         Film film = filmService.findById(filmId);
@@ -124,7 +123,7 @@ public class ReviewService {
             throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
         }
         if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,"Film not found");
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
         }
 
         return reviewRepository.findByFilmId(filmId);
@@ -138,7 +137,7 @@ public class ReviewService {
         try {
             return reviewRepository.findAll();
         } catch (Exception e) {
-            throw new ForbiddenAccessException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
+            throw new ForbiddenAccessException(HttpStatus.FORBIDDEN, errorMessageForbidden);
         }
     }
 }
