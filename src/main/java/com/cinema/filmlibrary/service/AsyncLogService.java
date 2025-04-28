@@ -59,10 +59,16 @@ public class AsyncLogService {
                     fileAttributes
             );
 
-            // Убедимся, что файл доступен только владельцу
             Files.write(logFile, currentLogs);
-            logFile.toFile().setReadable(true, true);  // Только владелец может читать
-            logFile.toFile().setWritable(true, true);   // Только владелец может писать
+
+            // Проверяем и обрабатываем результат установки прав
+            if (!logFile.toFile().setReadable(true, true)) {
+                throw new IOException("Failed to set read permissions for the log file");
+            }
+            if (!logFile.toFile().setWritable(true, true)) {
+                throw new IOException("Failed to set write permissions for the log file");
+            }
+
             logFile.toFile().deleteOnExit();
 
             LogObj task = new LogObj(taskId, "COMPLETED");
