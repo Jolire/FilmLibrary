@@ -10,13 +10,14 @@ import com.cinema.filmlibrary.repository.DirectorRepository;
 import com.cinema.filmlibrary.repository.FilmRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** The main method. */
+/** Some code here. */
 @Service
 public class FilmService {
     private static final String ERROR_MESSAGE = "Film not found";
@@ -27,14 +28,19 @@ public class FilmService {
 
     private final FilmRepository filmRepository;
     private final DirectorRepository directorRepository;
+    private final FilmService self; // Self-injection for cacheable methods
 
-    /** The main method. */
-    public FilmService(FilmRepository filmRepository, DirectorRepository directorRepository) {
+    /** Some code here. */
+    @Autowired
+    public FilmService(FilmRepository filmRepository,
+                       DirectorRepository directorRepository,
+                       FilmService filmService) { // Spring will inject proxy
         this.filmRepository = filmRepository;
         this.directorRepository = directorRepository;
+        this.self = filmService; // Store the proxy reference
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(value = FILMS_CACHE, key = "#title")
     public Film findByTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
@@ -44,7 +50,7 @@ public class FilmService {
         return filmRepository.findByTitle(title);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(FILMS_CACHE)
     public List<Film> findAllFilms() {
         try {
@@ -54,7 +60,7 @@ public class FilmService {
         }
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(value = FILMS_CACHE, key = "#id")
     public Film findById(Long id) {
         if (id == null || id <= 0) {
@@ -65,7 +71,7 @@ public class FilmService {
                         ERROR_MESSAGE));
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(value = FILMS_CACHE, key = "#directorName")
     public List<Film> findByDirectorName(String directorName) {
         if (directorName == null || directorName.trim().isEmpty()) {
@@ -75,7 +81,7 @@ public class FilmService {
         return filmRepository.findByDirectorName(directorName);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(value = FILMS_CACHE, key = "'reviewCount_' + #reviewCount")
     public List<Film> findByReviewCount(Long reviewCount) {
         if (reviewCount == null || reviewCount < 0) {
@@ -85,7 +91,7 @@ public class FilmService {
         return filmRepository.findByReviewCount(reviewCount);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {FILMS_CACHE, DIRECTORS_CACHE}, allEntries = true)
     public Film save(Film film) {
@@ -119,7 +125,7 @@ public class FilmService {
         }
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {FILMS_CACHE, DIRECTORS_CACHE}, key = "#id")
     public Film update(Long id, Film film) {
@@ -131,7 +137,8 @@ public class FilmService {
                     "Film object cannot be null");
         }
 
-        Film existingFilm = findById(id);
+        // Call through self proxy to ensure caching works
+        Film existingFilm = self.findById(id);
         film.setDirectors(existingFilm.getDirectors());
         film.setReviews(existingFilm.getReviews());
         film.setId(id);
@@ -139,7 +146,7 @@ public class FilmService {
         return filmRepository.save(film);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {FILMS_CACHE, DIRECTORS_CACHE}, allEntries = true)
     public void delete(Long id) {
@@ -155,7 +162,7 @@ public class FilmService {
         }
     }
 
-    /** The main method. */
+    /** Some code here. */
     @CacheEvict(value = {FILMS_CACHE, DIRECTORS_CACHE}, allEntries = true)
     public void clearCache() {
         // Spring will handle cache clearing automatically
