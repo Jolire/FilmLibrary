@@ -22,7 +22,7 @@ public class ReviewService {
     private static final String ERROR_MESSAGE = "Review not found";
     private static final String REVIEWS_CACHE = "reviews";
     private static final String FILMS_CACHE = "films";
-    private static String errorMessageForbidden = "Access to this operation is forbidden";
+    private final String errorMessageForbidden = "Access to this operation is forbidden";
     private final ReviewRepository reviewRepository;
     private final FilmService filmService;
     private final FilmRepository filmRepository;

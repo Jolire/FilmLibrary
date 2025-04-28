@@ -6,9 +6,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.cache.Cache;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -19,12 +24,7 @@ import org.springframework.stereotype.Service;
 public class AsyncLogService {
     private static final String LOG_FILE_PATH = "app.log";
 
-    /** Function to create log file with specified logs.
-     *
-     * @param taskId id of the task
-     * @param date date of the logs
-     * @param logsCache cache where log tasks stored
-     */
+    /** Some async method. */
     @Async("taskExecutor")
     public void createLogs(Long taskId, String date, Cache logsCache) {
         try {
@@ -45,8 +45,24 @@ public class AsyncLogService {
                         "No logs for date: " + date);
             }
 
-            Path logFile = Files.createTempFile("logs-" + formattedDate, ".log");
+            // Безопасное создание временного файла с ограниченными правами
+            Set<PosixFilePermission> permissions = EnumSet.of(
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_WRITE
+            );
+            FileAttribute<Set<PosixFilePermission>> fileAttributes =
+                    PosixFilePermissions.asFileAttribute(permissions);
+
+            Path logFile = Files.createTempFile(
+                    "logs-" + formattedDate,
+                    ".log",
+                    fileAttributes
+            );
+
+            // Убедимся, что файл доступен только владельцу
             Files.write(logFile, currentLogs);
+            logFile.toFile().setReadable(true, true);  // Только владелец может читать
+            logFile.toFile().setWritable(true, true);   // Только владелец может писать
             logFile.toFile().deleteOnExit();
 
             LogObj task = new LogObj(taskId, "COMPLETED");
