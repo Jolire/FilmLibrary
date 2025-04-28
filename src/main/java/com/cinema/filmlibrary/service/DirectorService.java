@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Class to perform asynchronous actions with logs. */
+/** Some code here. */
 @Service
 public class DirectorService {
     private static final String ERROR_MESSAGE = "Director not found";
@@ -27,22 +27,21 @@ public class DirectorService {
     private final FilmService filmService;
     private final FilmRepository filmRepository;
 
-    /** The main method. */
-    public DirectorService(DirectorRepository directorRepository, FilmService filmService,
+    /** Some code here. */
+    public DirectorService(DirectorRepository directorRepository,
+                           FilmService filmService,
                            FilmRepository filmRepository) {
         this.directorRepository = directorRepository;
         this.filmService = filmService;
         this.filmRepository = filmRepository;
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(value = DIRECTORS_CACHE, key = "#id")
     public Director findById(Long id, Long filmId) {
         if (filmId == null) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
-        }
-        if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "filmId cannot be null");
         }
 
         Film film = filmService.findById(filmId);
@@ -51,13 +50,14 @@ public class DirectorService {
                         ERROR_MESSAGE));
 
         if (!film.getDirectors().contains(director)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, ERROR_MESSAGE);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,
+                    ERROR_MESSAGE);
         }
 
         return director;
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Cacheable(DIRECTORS_CACHE)
     public List<Director> findAllDirectors() {
         try {
@@ -67,7 +67,7 @@ public class DirectorService {
         }
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public Director save(Director director, Long filmId) {
@@ -91,7 +91,7 @@ public class DirectorService {
         return directorRepository.save(director);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public Director update(Long id, Director director) {
@@ -111,27 +111,35 @@ public class DirectorService {
         return directorRepository.save(director);
     }
 
-    /** The main method. */
+    /** Some code here. */
     @Transactional
     @CacheEvict(value = {DIRECTORS_CACHE, FILMS_CACHE}, allEntries = true)
     public void delete(Long id, Long filmId) {
         if (filmId == null) {
-            throw new InvalidRequestException(HttpStatus.BAD_REQUEST, "filmId cannot be null");
-        }
-        if (!filmRepository.existsById(filmId)) {
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND, "Film not found");
+            throw new InvalidRequestException(HttpStatus.BAD_REQUEST,
+                    "filmId cannot be null");
         }
 
         Film film = filmService.findById(filmId);
-        Director director = findById(id, filmId);
+        Director director = directorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(HttpStatus.NOT_FOUND,
+                        ERROR_MESSAGE));
 
+        if (!film.getDirectors().contains(director)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND,
+                    ERROR_MESSAGE);
+        }
+
+        // Remove director from film
         List<Director> directors = film.getDirectors();
         directors.remove(director);
         film.setDirectors(directors);
         filmService.update(filmId, film);
 
+        // Remove film from director
         List<Film> films = director.getFilms();
         films.remove(film);
+
         if (films.isEmpty()) {
             directorRepository.delete(director);
         } else {

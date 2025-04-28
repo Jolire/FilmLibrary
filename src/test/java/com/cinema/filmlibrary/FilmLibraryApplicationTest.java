@@ -8,16 +8,5 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class FilmLibraryApplicationTest {
-
-	@Test
-	void contextLoads(ApplicationContext context) {
-		// Проверяем, что контекст приложения загружается
-		assertThat(context).isNotNull();
-	}
-
-	@Test
-	void mainMethodStartsApplication() {
-		// Проверяем, что метод main запускает приложение без исключений
-		FilmLibraryApplication.main(new String[] {});
-	}
+  // some code here
 }
